@@ -17,45 +17,52 @@ A_TrayMenu.Add()
 
 DisableFrameLimiter(*)
 {
-	Send "^+1" ;Ctrl+Shift+1
+	Send "^+2" ;Ctrl+Shift+1
 }
 
 LimitFrames60(*)
 {
+	Send "^+1"
 	Send "^+6" ;Ctrl+Shift+6
 }
 
 LimitFrames40(*)
 {
+	Send "^+6"
 	Send "^+4" ;Ctrl+Shift+4
 }
 
 LimitFrames30(*)
 {
+	Send "^+6"
 	Send "^+3" ;Ctrl+Shift+3
 }
 
 DisableOSD(*)
 {
-	Send "^+F10" ;Ctrl+Shift+F10
+	Send "^+{F11}" ;Ctrl+Shift+F11
 }
 
 ShowSubtleOSD(*)
 {
-	Send "^+F1" ;Ctrl+Shift+F1
+	Send "^+{F10}"
+	Send "^+{F1}" ;Ctrl+Shift+F1
 }
 
 ShowMangoOSD(*)
 {
-	Send "^+F2" ;Ctrl+Shift+F2
+	Send "^+{F10}"
+	Send "^+{F2}" ;Ctrl+Shift+F2
 } 
 
 ShowMangoLatencyOSD(*)
 {
-	Send "^+F3" ;Ctrl+Shift+F3
+	Send "^+{F10}"
+	Send "^+{F3}" ;Ctrl+Shift+F3
 } 
 
 ShowTopBarOSD(*)
 {
-	Send "^+F4" ;Ctrl+Shift+F4
+	Send "^+{F10}"
+	Send "^+{F4}" ;Ctrl+Shift+F4
 }
