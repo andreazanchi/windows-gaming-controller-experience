@@ -1,5 +1,6 @@
 ﻿#Requires AutoHotkey v2.0
 Persistent
+A_TrayMenu.TraySetIcon("speed-radar.png")
 A_TrayMenu.Delete()
 A_TrayMenu.Add()
 A_TrayMenu.Add("Disable Frame Limiter", DisableFrameLimiter)
