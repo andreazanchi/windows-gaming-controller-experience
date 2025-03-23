@@ -1,6 +1,6 @@
 ﻿#Requires AutoHotkey v2.0
 Persistent
-A_TrayMenu.TraySetIcon("speed-radar.png")
+TraySetIcon("speed-radar.png")
 A_TrayMenu.Delete()
 A_TrayMenu.Add()
 A_TrayMenu.Add("Disable Frame Limiter", DisableFrameLimiter)
@@ -41,29 +41,33 @@ LimitFrames30(*)
 
 DisableOSD(*)
 {
-	Send "^+{F11}" ;Ctrl+Shift+F11
+	Send "^+{F6}" ;Ctrl+Shift+F11
 }
 
 ShowSubtleOSD(*)
 {
 	Send "^+{F10}"
+	sleep 100
 	Send "^+{F1}" ;Ctrl+Shift+F1
 }
 
 ShowMangoOSD(*)
 {
-	Send "^+{F10}"
+	Send "^+{F5}"
+	sleep 100
 	Send "^+{F2}" ;Ctrl+Shift+F2
 } 
 
 ShowMangoLatencyOSD(*)
 {
-	Send "^+{F10}"
+	Send "^+{F5}"
+	sleep 100
 	Send "^+{F3}" ;Ctrl+Shift+F3
 } 
 
 ShowTopBarOSD(*)
 {
-	Send "^+{F10}"
+	Send "^+{F5}"
+	sleep 100
 	Send "^+{F4}" ;Ctrl+Shift+F4
 }
