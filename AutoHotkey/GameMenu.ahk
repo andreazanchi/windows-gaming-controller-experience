@@ -18,56 +18,71 @@ A_TrayMenu.Add()
 
 DisableFrameLimiter(*)
 {
-	Send "^+2" ;Ctrl+Shift+1
+	Send "^+1" ;Ctrl+Shift+1
 }
 
 LimitFrames60(*)
 {
-	Send "^+1"
 	Send "^+6" ;Ctrl+Shift+6
 }
 
 LimitFrames40(*)
 {
-	Send "^+6"
 	Send "^+4" ;Ctrl+Shift+4
 }
 
 LimitFrames30(*)
 {
-	Send "^+6"
 	Send "^+3" ;Ctrl+Shift+3
 }
 
 DisableOSD(*)
 {
-	Send "^+{F6}" ;Ctrl+Shift+F11
+	Send "^+F10" ;Ctrl+Shift+F10
 }
 
 ShowSubtleOSD(*)
 {
-	Send "^+{F10}"
-	sleep 100
-	Send "^+{F1}" ;Ctrl+Shift+F1
+	Send "^+F1" ;Ctrl+Shift+F1
 }
 
 ShowMangoOSD(*)
 {
-	Send "^+{F5}"
-	sleep 100
-	Send "^+{F2}" ;Ctrl+Shift+F2
+	Send "^+F2" ;Ctrl+Shift+F2
 } 
 
 ShowMangoLatencyOSD(*)
 {
-	Send "^+{F5}"
-	sleep 100
-	Send "^+{F3}" ;Ctrl+Shift+F3
+	Send "^+F3" ;Ctrl+Shift+F3
 } 
 
 ShowTopBarOSD(*)
 {
-	Send "^+{F5}"
-	sleep 100
-	Send "^+{F4}" ;Ctrl+Shift+F4
+	Send "^+F4" ;Ctrl+Shift+F4
+}
+
+#b::
+{
+	Send "#b"
+	MoveMouseToTray()
+}
+
+MoveMouseToTray(*) 
+{
+	TrayIconRect := GetTrayIconRECT(A_ScriptHwnd)
+	CoordMode "Mouse", "Screen"
+	IconCenterX := (TrayIconRect.Left+TrayIconRect.Right)/2
+	IconCenterY := (TrayIconRect.Top+TrayIconRect.Bottom)/2
+	MouseMove IconCenterX, IconCenterY
+}
+
+GetTrayIconRECT(hwnd) {
+   static AHK_NOTIFYICON := 0x0404
+   static Size := 16 + 3 * A_PtrSize
+   NOTIFYICONIDENTIFIER := Buffer(Size, 0)
+   NumPut 'UInt', Size, NOTIFYICONIDENTIFIER, 0
+   NumPut 'Ptr',  hwnd, NOTIFYICONIDENTIFIER, A_PtrSize
+   NumPut 'UInt', AHK_NOTIFYICON, NOTIFYICONIDENTIFIER, 2 * A_PtrSize
+   if !DllCall('Shell32\Shell_NotifyIconGetRect', 'Ptr', NOTIFYICONIDENTIFIER, 'Ptr', RECT := Buffer(16), 'HRESULT')
+      return {Left: NumGet(RECT, 0, 'Int'), Top: NumGet(RECT, 4, 'Int'), Right: NumGet(RECT, 8, 'Int'), Bottom: NumGet(RECT, 12, 'Int')}
 }
