@@ -72,10 +72,13 @@ ShowTopBarOSD(*)
 	Send "^+F4" ;Ctrl+Shift+F4
 }
 
-#b::
+#+b::
 {
 	Send "#b"
+	sleep 100
 	MoveMouseToTray()
+	sleep 200
+	Send "#+f" ; Requires Powertoys with the Find My mouse module active
 }
 
 MoveMouseToTray(*) 
