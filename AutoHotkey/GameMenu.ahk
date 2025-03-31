@@ -19,29 +19,34 @@ A_TrayMenu.Add()
 DisableFrameLimiter(*)
 {
 	Send "^+2" ;Ctrl+Shift+1
+	RestoreActiveWindow()
 }
 
 LimitFrames60(*)
 {
 	Send "^+1"
 	Send "^+6" ;Ctrl+Shift+6
+	RestoreActiveWindow()
 }
 
 LimitFrames40(*)
 {
 	Send "^+1"
 	Send "^+4" ;Ctrl+Shift+4
+	RestoreActiveWindow()
 }
 
 LimitFrames30(*)
 {
 	Send "^+1"
 	Send "^+3" ;Ctrl+Shift+3
+	RestoreActiveWindow()
 }
 
 DisableOSD(*)
 {
 	Send "^+{F6}" ;Ctrl+Shift+F6
+	RestoreActiveWindow()
 }
 
 ShowSubtleOSD(*)
@@ -49,6 +54,7 @@ ShowSubtleOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+{F1}" ;Ctrl+Shift+F1
+	RestoreActiveWindow()
 }
 
 ShowMangoOSD(*)
@@ -56,6 +62,7 @@ ShowMangoOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F2" ;Ctrl+Shift+F2
+	RestoreActiveWindow()
 } 
 
 ShowMangoLatencyOSD(*)
@@ -63,6 +70,7 @@ ShowMangoLatencyOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F3" ;Ctrl+Shift+F3
+	RestoreActiveWindow()
 } 
 
 ShowTopBarOSD(*)
@@ -70,15 +78,27 @@ ShowTopBarOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F4" ;Ctrl+Shift+F4
+	RestoreActiveWindow()
 }
 
 #+b::
 {
+	StoreActiveWindow()
 	Send "#b"
 	sleep 100
 	MoveMouseToTray()
 	sleep 200
-	Send "#+f" ; Requires Powertoys with the Find My mouse module active
+	Send "#+f" ; Requires Powertoys with the Find My mouse module active	
+}
+
+StoreActiveWindow(*)#
+{
+	global activeWindowTitle := WinGetTitle("A")
+}
+
+RestoreActiveWindow(*) 
+{
+		WinActivate activeWindowTitle
 }
 
 MoveMouseToTray(*) 
