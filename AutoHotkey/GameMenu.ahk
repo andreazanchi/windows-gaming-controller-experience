@@ -1,52 +1,98 @@
 ﻿#Requires AutoHotkey v2.0
-Persistent
-TraySetIcon("speed-radar.png")
-A_TrayMenu.Delete()
-A_TrayMenu.Add()
-A_TrayMenu.Add("Disable Frame Limiter", DisableFrameLimiter)
-A_TrayMenu.Add("Frame limiter 60", LimitFrames60)
-A_TrayMenu.Add("Frame limiter 40", LimitFrames40)
-A_TrayMenu.Add("Frame limiter 30", LimitFrames30)
-A_TrayMenu.Add()
-A_TrayMenu.Add()
-A_TrayMenu.Add("Disable OSD", DisableOSD)
-A_TrayMenu.Add("Show Subtle OSD", ShowSubtleOSD)
-A_TrayMenu.Add("Show Mango OSD", ShowMangoOSD)
-A_TrayMenu.Add("Show Mango_Latency OSD", ShowMangoLatencyOSD)
-A_TrayMenu.Add("Show TopBar OSD", ShowTopBarOSD)
-A_TrayMenu.Add()
+
+BuildTrayMenu()
+;BuildMenu()
+
+
+BuildTrayMenu(*)
+{
+	Persistent
+	TraySetIcon("speed-radar.png")
+	A_TrayMenu.Delete()
+	A_TrayMenu.Add()
+	A_TrayMenu.Add("Disable Frame Limiter", DisableFrameLimiter)
+	A_TrayMenu.Add("Frame limiter 60", LimitFrames60)
+	A_TrayMenu.Add("Frame limiter 40", LimitFrames40)
+	A_TrayMenu.Add("Frame limiter 30", LimitFrames30)
+	A_TrayMenu.Add()
+	A_TrayMenu.Add("Disable Overlay", DisableOSD)
+	A_TrayMenu.Add("Show Subtle Overlay", ShowSubtleOSD)
+	A_TrayMenu.Add("Show Mango Overlay", ShowMangoOSD)
+	A_TrayMenu.Add("Show Mango_Latency Overlay", ShowMangoLatencyOSD)
+	A_TrayMenu.Add("Show TopBar Overlay", ShowTopBarOSD)
+	A_TrayMenu.Add()
+	A_TrayMenu.Add("Show Taskbar", ShowTaskbar)
+	SetIconsForTrayMenu()
+	A_TrayMenu.Add()
+}
+
+SetIconsForTrayMenu(*) 
+{
+	A_TrayMenu.setIcon("Disable Frame Limiter", "speed-up-fill_.png",, 0)
+	A_TrayMenu.setIcon("Frame limiter 60", "outline-60fps-select_.png",, 0)
+	A_TrayMenu.setIcon("Frame limiter 40", "number-40-small_.png",, 0)
+	A_TrayMenu.setIcon("Frame limiter 30", "30fps-select_.png",, 0)
+	A_TrayMenu.setIcon("Disable Overlay", "off-tag_.png",, 0)
+	A_TrayMenu.setIcon("Show Subtle Overlay", "monitor_.png",, 0)
+	A_TrayMenu.setIcon("Show Mango Overlay", "monitor_.png",, 0)
+	A_TrayMenu.setIcon("Show Mango_Latency Overlay", "monitor_.png",, 0)
+	A_TrayMenu.setIcon("Show TopBar Overlay", "monitor_.png",, 0)
+	A_TrayMenu.setIcon("Show Taskbar", "table-alt-fill_.png",, 0)
+}
+
+BuildMenu(*)
+{
+	Persistent
+	; Create the popup menu by adding some items to it.
+	MyMenu := Menu()
+	MyMenu.Add("Item 1", MenuHandler)
+	MyMenu.Add("Item 2", MenuHandler)
+	MyMenu.Add()  ; Add a separator line.
+
+	; Create another menu destined to become a submenu of the above menu.
+	Submenu1 := Menu()
+	Submenu1.Add("Item A", MenuHandler)
+	Submenu1.Add("Item B", MenuHandler)
+
+	; Create a submenu in the first menu (a right-arrow indicator). When the user selects it, the second menu is displayed.
+	MyMenu.Add("My Submenu", Submenu1)
+
+	MyMenu.Add()  ; Add a separator line below the submenu.
+	MyMenu.Add("Item 3", MenuHandler)  ; Add another menu item beneath the submenu.
+	MyMenu.show()
+
+}
+
+MenuHandler(Item, *) {
+  ;  MsgBox("You selected " Item)
+}
 
 DisableFrameLimiter(*)
 {
 	Send "^+2" ;Ctrl+Shift+1
-	RestoreActiveWindow()
 }
 
 LimitFrames60(*)
 {
 	Send "^+1"
 	Send "^+6" ;Ctrl+Shift+6
-	RestoreActiveWindow()
 }
 
 LimitFrames40(*)
 {
 	Send "^+1"
 	Send "^+4" ;Ctrl+Shift+4
-	RestoreActiveWindow()
 }
 
 LimitFrames30(*)
 {
 	Send "^+1"
 	Send "^+3" ;Ctrl+Shift+3
-	RestoreActiveWindow()
 }
 
 DisableOSD(*)
 {
 	Send "^+{F6}" ;Ctrl+Shift+F6
-	RestoreActiveWindow()
 }
 
 ShowSubtleOSD(*)
@@ -54,7 +100,6 @@ ShowSubtleOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+{F1}" ;Ctrl+Shift+F1
-	RestoreActiveWindow()
 }
 
 ShowMangoOSD(*)
@@ -62,7 +107,6 @@ ShowMangoOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F2" ;Ctrl+Shift+F2
-	RestoreActiveWindow()
 } 
 
 ShowMangoLatencyOSD(*)
@@ -70,7 +114,6 @@ ShowMangoLatencyOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F3" ;Ctrl+Shift+F3
-	RestoreActiveWindow()
 } 
 
 ShowTopBarOSD(*)
@@ -78,35 +121,44 @@ ShowTopBarOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F4" ;Ctrl+Shift+F4
-	RestoreActiveWindow()
+}
+
+ShowTaskbar(*)
+{
+	Send "#t"
 }
 
 #+b::
 {
-	StoreActiveWindow()
-	Send "#b"
-	sleep 100
-	MoveMouseToTray()
-	sleep 200
-	Send "#+f" ; Requires Powertoys with the Find My mouse module active	
+	MoveMouseCloseToTrayIcon()
+	A_TrayMenu.show()
 }
 
-StoreActiveWindow(*)#
+StoreActiveWindow(*)
 {
 	global activeWindowTitle := WinGetTitle("A")
 }
 
 RestoreActiveWindow(*) 
 {
-		WinActivate activeWindowTitle
+	WinActivate activeWindowTitle
 }
 
-MoveMouseToTray(*) 
+MoveMouseToTrayIconCenter(*) 
 {
 	TrayIconRect := GetTrayIconRECT(A_ScriptHwnd)
 	CoordMode "Mouse", "Screen"
 	IconCenterX := (TrayIconRect.Left+TrayIconRect.Right)/2
 	IconCenterY := (TrayIconRect.Top+TrayIconRect.Bottom)/2
+	MouseMove IconCenterX, IconCenterY
+}
+
+MoveMouseCloseToTrayIcon(*) 
+{
+	TrayIconRect := GetTrayIconRECT(A_ScriptHwnd)
+	CoordMode "Mouse", "Screen"
+	IconCenterX := TrayIconRect.Left-1
+	IconCenterY := TrayIconRect.Top-1
 	MouseMove IconCenterX, IconCenterY
 }
 
