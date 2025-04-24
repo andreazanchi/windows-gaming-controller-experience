@@ -70,29 +70,34 @@ MenuHandler(Item, *) {
 DisableFrameLimiter(*)
 {
 	Send "^+2" ;Ctrl+Shift+1
+	RestoreActiveWindow()
 }
 
 LimitFrames60(*)
 {
 	Send "^+1"
 	Send "^+6" ;Ctrl+Shift+6
+	RestoreActiveWindow()
 }
 
 LimitFrames40(*)
 {
 	Send "^+1"
 	Send "^+4" ;Ctrl+Shift+4
+	RestoreActiveWindow()
 }
 
 LimitFrames30(*)
 {
 	Send "^+1"
 	Send "^+3" ;Ctrl+Shift+3
+	RestoreActiveWindow()
 }
 
 DisableOSD(*)
 {
 	Send "^+{F6}" ;Ctrl+Shift+F6
+	RestoreActiveWindow()
 }
 
 ShowSubtleOSD(*)
@@ -100,6 +105,7 @@ ShowSubtleOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+{F1}" ;Ctrl+Shift+F1
+	RestoreActiveWindow()
 }
 
 ShowMangoOSD(*)
@@ -107,6 +113,7 @@ ShowMangoOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F2" ;Ctrl+Shift+F2
+	RestoreActiveWindow()
 } 
 
 ShowMangoLatencyOSD(*)
@@ -114,6 +121,7 @@ ShowMangoLatencyOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F3" ;Ctrl+Shift+F3
+	RestoreActiveWindow()
 } 
 
 ShowTopBarOSD(*)
@@ -121,6 +129,7 @@ ShowTopBarOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+F4" ;Ctrl+Shift+F4
+	RestoreActiveWindow()
 }
 
 ShowTaskbar(*)
@@ -130,6 +139,7 @@ ShowTaskbar(*)
 
 #+b::
 {
+	StoreActiveWindow()
 	MoveMouseCloseToTrayIcon()
 	A_TrayMenu.show()
 }
@@ -141,7 +151,9 @@ StoreActiveWindow(*)
 
 RestoreActiveWindow(*) 
 {
-	WinActivate activeWindowTitle
+	if WinExist(activeWindowTitle) 
+		WinActivate activeWindowTitle
+	
 }
 
 MoveMouseToTrayIconCenter(*) 
