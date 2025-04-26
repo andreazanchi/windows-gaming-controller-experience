@@ -112,7 +112,7 @@ ShowMangoOSD(*)
 {
 	Send "^+{F5}"
 	sleep 100
-	Send "^+F2" ;Ctrl+Shift+F2
+	Send "^+{F2}" ;Ctrl+Shift+F2
 	RestoreActiveWindow()
 } 
 
@@ -120,7 +120,7 @@ ShowMangoLatencyOSD(*)
 {
 	Send "^+{F5}"
 	sleep 100
-	Send "^+F3" ;Ctrl+Shift+F3
+	Send "^+{F3}" ;Ctrl+Shift+F3
 	RestoreActiveWindow()
 } 
 
@@ -128,7 +128,7 @@ ShowTopBarOSD(*)
 {
 	Send "^+{F5}"
 	sleep 100
-	Send "^+F4" ;Ctrl+Shift+F4
+	Send "^+{F4}" ;Ctrl+Shift+F4
 	RestoreActiveWindow()
 }
 
