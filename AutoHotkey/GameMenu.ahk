@@ -1,8 +1,76 @@
 ﻿#Requires AutoHotkey v2.0
 
-BuildTrayMenu()
+;BuildTrayMenu()
 ;BuildMenu()
+myGui := BuildQuickToolsGUi()
 
+BuildQuickToolsGUi(*)
+{	
+	global myGui := Gui()
+	myGui.Opt("-MinimizeBox -MaximizeBox +AlwaysOnTop")
+    myGui.Add("Picture", "XM+3 YM+3 w32 h32 Section +Disabled", "speed-up-fill_.png")
+	ButtonDisableFrameLimit := myGui.Add("Button", "XP+35 YP w181 h32", "Disable Frame Limit")
+    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "outline-60fps-select_.png")
+	Button60FPSLimit := myGui.Add("Button", "XP+35 YP w181 h32", "60 FPS Limit")
+    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "number-40-small_.png")
+	Button40FPSLimit := myGui.Add("Button", "XP+35 YP w181 h32", "40 FPS Limit")
+    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "30fps-select_.png")
+    FPSLimithBtnFpsLimit1 := myGui.Add("Button", "XP+35 YP w181 h32", "30 FPS Limit")
+    myGui.Add("Picture", "XS YS+50 w32 h32 Section +Disabled", "off-tag_.png")
+	ButtonDisableOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Disable Overlay")
+    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+	ButtonSubtleOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Subtle Overlay")
+    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+	ButtonMangoOverlay := myGui.Add("Button", "XP+35 YP  w181 h32", "Mango Overlay")
+    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+	ButtonMangoLatencyOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Mango Latency Overlay")
+    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+	ButtonTopbarOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Topbar Overlay")
+	ButtonBackToGame := myGui.Add("Button", "XS+35 YS+50  w181 h32", "Back To Game")
+	ButtonClose := myGui.Add("Button", "XP XS+35  w181 h32", "Close")
+	ButtonDisableFrameLimit.OnEvent("Click", OnEventHandler)
+	Button60FPSLimit.OnEvent("Click", OnEventHandler)
+	FPSLimithBtnFpsLimit1.OnEvent("Click", OnEventHandler)
+	Button40FPSLimit.OnEvent("Click", OnEventHandler)
+	ButtonDisableOverlay.OnEvent("Click", OnEventHandler)
+	ButtonSubtleOverlay.OnEvent("Click", OnEventHandler)
+	ButtonMangoOverlay.OnEvent("Click", OnEventHandler)
+	ButtonMangoLatencyOverlay.OnEvent("Click", OnEventHandler)
+	ButtonTopbarOverlay.OnEvent("Click", OnEventHandler)
+	ButtonBackToGame.OnEvent("Click", OnEventHandler)
+	ButtonClose.OnEvent("Click", (*) => myGui.Hide())
+	myGui.OnEvent('Close', (*) => myGui.Hide())
+	myGui.Title := "Quick Tools"
+	return myGui
+}
+
+OnEventHandler(GuiCtrlObj, Info)
+{
+	Switch GuiCtrlObj.Text
+	{
+		Case "Disable Frame Limit":
+			DisableFrameLimiter()
+		Case "60 FPS Limit":
+			LimitFrames60()
+		Case "30 FPS Limit":
+			LimitFrames30()
+		Case "40 FPS Limit":
+			LimitFrames40()
+		Case "Disable Overlay":
+			DisableOSD()
+		Case "Subtle Overlay":
+			ShowSubtleOSD()
+		Case "Mango Overlay":
+			ShowMangoOSD()	
+		Case "Mango Latency Overlay":
+			ShowMangoLatencyOSD()	
+		Case "Topbar Overlay":
+			ShowTopBarOSD()		
+		Case "Back To Game":
+			BackToGame()
+		Default:
+	}
+}
 
 BuildTrayMenu(*)
 {
@@ -70,34 +138,34 @@ MenuHandler(Item, *) {
 DisableFrameLimiter(*)
 {
 	Send "^+2" ;Ctrl+Shift+1
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 }
 
 LimitFrames60(*)
 {
 	Send "^+1"
 	Send "^+6" ;Ctrl+Shift+6
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 }
 
 LimitFrames40(*)
 {
 	Send "^+1"
 	Send "^+4" ;Ctrl+Shift+4
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 }
 
 LimitFrames30(*)
 {
 	Send "^+1"
 	Send "^+3" ;Ctrl+Shift+3
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 }
 
 DisableOSD(*)
 {
 	Send "^+{F6}" ;Ctrl+Shift+F6
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 }
 
 ShowSubtleOSD(*)
@@ -105,7 +173,7 @@ ShowSubtleOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+{F1}" ;Ctrl+Shift+F1
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 }
 
 ShowMangoOSD(*)
@@ -113,7 +181,7 @@ ShowMangoOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+{F2}" ;Ctrl+Shift+F2
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 } 
 
 ShowMangoLatencyOSD(*)
@@ -121,7 +189,7 @@ ShowMangoLatencyOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+{F3}" ;Ctrl+Shift+F3
-	RestoreActiveWindow()
+	;RestoreActiveWindow()
 } 
 
 ShowTopBarOSD(*)
@@ -129,6 +197,12 @@ ShowTopBarOSD(*)
 	Send "^+{F5}"
 	sleep 100
 	Send "^+{F4}" ;Ctrl+Shift+F4
+	;RestoreActiveWindow()
+}
+
+BackToGame(*)
+{
+	myGui.Hide()
 	RestoreActiveWindow()
 }
 
@@ -140,8 +214,17 @@ ShowTaskbar(*)
 #+b::
 {
 	StoreActiveWindow()
-	MoveMouseCloseToTrayIcon()
-	A_TrayMenu.show()
+	;MoveMouseCloseToTrayIcon()
+	;A_TrayMenu.show()
+	;myGui.show(" y386 w205 h476")
+	myGui.show("Hide Autosize")
+	myGui.GetPos(&X, &Y, &Width, &Height)
+	scaledWidth := A_ScreenWidth/(A_ScreenDPI/96)
+	scaledHeight := A_ScreenHeight/(A_ScreenDPI/96)
+	xPos := scaledWidth - Width
+	yPos := scaledHeight - Height - 100
+	myGui.Move(xPos, yPos)
+	myGui.Show()
 }
 
 StoreActiveWindow(*)
