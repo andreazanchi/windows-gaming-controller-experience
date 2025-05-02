@@ -1,243 +1,203 @@
 ﻿#Requires AutoHotkey v2.0
 
-;BuildTrayMenu()
-;BuildMenu()
-myGui := BuildQuickToolsGUi()
+aQuickToolsModel := QuickToolsModel()
+aQuickToolsController := QuickToolsController(aQuickToolsModel)
+aButtonEventHandler := MyButtonEventHandler(aQuickToolsController)
+aQuickToolsWindow := QuickToolsWindow(aButtonEventHandler, aQuickToolsModel)
 
-BuildQuickToolsGUi(*)
-{	
-	global myGui := Gui()
-	myGui.Opt("-MinimizeBox -MaximizeBox +AlwaysOnTop")
-    myGui.Add("Picture", "XM+3 YM+3 w32 h32 Section +Disabled", "speed-up-fill_.png")
-	ButtonDisableFrameLimit := myGui.Add("Button", "XP+35 YP w181 h32", "Disable Frame Limit")
-    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "outline-60fps-select_.png")
-	Button60FPSLimit := myGui.Add("Button", "XP+35 YP w181 h32", "60 FPS Limit")
-    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "number-40-small_.png")
-	Button40FPSLimit := myGui.Add("Button", "XP+35 YP w181 h32", "40 FPS Limit")
-    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "30fps-select_.png")
-    FPSLimithBtnFpsLimit1 := myGui.Add("Button", "XP+35 YP w181 h32", "30 FPS Limit")
-    myGui.Add("Picture", "XS YS+50 w32 h32 Section +Disabled", "off-tag_.png")
-	ButtonDisableOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Disable Overlay")
-    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
-	ButtonSubtleOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Subtle Overlay")
-    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
-	ButtonMangoOverlay := myGui.Add("Button", "XP+35 YP  w181 h32", "Mango Overlay")
-    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
-	ButtonMangoLatencyOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Mango Latency Overlay")
-    myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
-	ButtonTopbarOverlay := myGui.Add("Button", "XP+35 YP w181 h32", "Topbar Overlay")
-	ButtonBackToGame := myGui.Add("Button", "XS+35 YS+50  w181 h32", "Back To Game")
-	ButtonClose := myGui.Add("Button", "XP XS+35  w181 h32", "Close")
-	ButtonDisableFrameLimit.OnEvent("Click", OnEventHandler)
-	Button60FPSLimit.OnEvent("Click", OnEventHandler)
-	FPSLimithBtnFpsLimit1.OnEvent("Click", OnEventHandler)
-	Button40FPSLimit.OnEvent("Click", OnEventHandler)
-	ButtonDisableOverlay.OnEvent("Click", OnEventHandler)
-	ButtonSubtleOverlay.OnEvent("Click", OnEventHandler)
-	ButtonMangoOverlay.OnEvent("Click", OnEventHandler)
-	ButtonMangoLatencyOverlay.OnEvent("Click", OnEventHandler)
-	ButtonTopbarOverlay.OnEvent("Click", OnEventHandler)
-	ButtonBackToGame.OnEvent("Click", OnEventHandler)
-	ButtonClose.OnEvent("Click", (*) => myGui.Hide())
-	myGui.OnEvent('Close', (*) => myGui.Hide())
-	myGui.Title := "Quick Tools"
-	return myGui
+
+class QuickToolsModel {
+	gameTitle := ""
 }
 
-OnEventHandler(GuiCtrlObj, Info)
-{
-	Switch GuiCtrlObj.Text
-	{
-		Case "Disable Frame Limit":
-			DisableFrameLimiter()
-		Case "60 FPS Limit":
-			LimitFrames60()
-		Case "30 FPS Limit":
-			LimitFrames30()
-		Case "40 FPS Limit":
-			LimitFrames40()
-		Case "Disable Overlay":
-			DisableOSD()
-		Case "Subtle Overlay":
-			ShowSubtleOSD()
-		Case "Mango Overlay":
-			ShowMangoOSD()	
-		Case "Mango Latency Overlay":
-			ShowMangoLatencyOSD()	
-		Case "Topbar Overlay":
-			ShowTopBarOSD()		
-		Case "Back To Game":
-			BackToGame()
-		Default:
+class MyButtonEventHandler {
+	
+	aQuickToolsController := ""
+	
+	__New(quickToolsController) {
+		this.aQuickToolsController := quickToolsController
+	}
+
+	Call(GuiCtrlObj, Info) {
+		Switch GuiCtrlObj.Text {
+			Case "Disable Frame Limit":
+				this.aQuickToolsController.DisableFrameLimiter()
+			Case "60 FPS Limit":
+				this.aQuickToolsController.LimitFrames60()
+			Case "30 FPS Limit":
+				this.aQuickToolsController.LimitFrames30()
+			Case "40 FPS Limit":
+				this.aQuickToolsController.LimitFrames40()
+			Case "Disable Overlay":
+				this.aQuickToolsController.DisableOSD()
+			Case "Subtle Overlay":
+				this.aQuickToolsController.ShowSubtleOSD()
+			Case "Mango Overlay":
+				this.aQuickToolsController.ShowMangoOSD()	
+			Case "Mango Latency Overlay":
+				this.aQuickToolsController.ShowMangoLatencyOSD()	
+			Case "Topbar Overlay":
+				this.aQuickToolsController.ShowTopBarOSD()		
+			Case "Back To Game": 
+				this.myGui.Hide()
+				aQuickToolsController.restoreActiveWindow()
+			Default:
+		}
+	
+	}
+
+
+}
+
+class QuickToolsWindow {
+	
+	myGui := ""
+	quickToolsModel := ""
+	gameTitleTextBox := ""
+
+	__New(eventHandler, quickToolsModel) {
+		this.quickToolsModel := quickToolsModel
+		this.myGui := Gui()
+		this.myGui.Title := "Quick Tools"
+		this.myGui.Opt("-MinimizeBox -MaximizeBox +AlwaysOnTop")
+		this.myGui.Add("Picture", "XM+3 YM+3 w32 h32 Section +Disabled", "speed-up-fill_.png")
+		buttonDisableFrameLimit := this.myGui.Add("Button", "XP+35 YP w181 h32", "Disable Frame Limit")
+		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "outline-60fps-select_.png")
+		button60FPSLimit := this.myGui.Add("Button", "XP+35 YP w181 h32", "60 FPS Limit")
+		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "number-40-small_.png")
+		button40FPSLimit := this.myGui.Add("Button", "XP+35 YP w181 h32", "40 FPS Limit")
+		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "30fps-select_.png")
+		FPSLimithBtnFpsLimit1 := this.myGui.Add("Button", "XP+35 YP w181 h32", "30 FPS Limit")
+		this.myGui.Add("Picture", "XS YS+50 w32 h32 Section +Disabled", "off-tag_.png")
+		buttonDisableOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Disable Overlay")
+		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+		buttonSubtleOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Subtle Overlay")
+		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+		buttonMangoOverlay := this.myGui.Add("Button", "XP+35 YP  w181 h32", "Mango Overlay")
+		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+		buttonMangoLatencyOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Mango Latency Overlay")
+		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
+		buttonTopbarOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Topbar Overlay")
+		buttonBackToGame := this.myGui.Add("Button", "XS+35 YS+50  w181 h32", "Back To Game")
+		this.gameTitleTextBox := this.myGui.Add("Text", "XP YP+35  w181 h16", "")
+		buttonClose := this.myGui.Add("Button", "XP XS+35  w181 h32", "Close")
+		buttonDisableFrameLimit.OnEvent("Click", eventHandler)
+		button60FPSLimit.OnEvent("Click", eventHandler)
+		FPSLimithBtnFpsLimit1.OnEvent("Click", eventHandler)
+		button40FPSLimit.OnEvent("Click", eventHandler)
+		buttonDisableOverlay.OnEvent("Click", eventHandler)
+		buttonSubtleOverlay.OnEvent("Click", eventHandler)
+		buttonMangoOverlay.OnEvent("Click", eventHandler)
+		buttonMangoLatencyOverlay.OnEvent("Click", eventHandler)
+		buttonTopbarOverlay.OnEvent("Click", eventHandler)
+		buttonBackToGame.OnEvent("Click", eventHandler)
+		buttonClose.OnEvent("Click", (*) => this.myGui.Hide())
+		this.myGui.OnEvent('Close', (*) => this.myGui.Hide())
+	}
+
+	showRight(*) {
+		this.myGui.show("Hide Autosize")
+		this.myGui.GetPos(&X, &Y, &Width, &Height)
+		scaledWidth := A_ScreenWidth/(A_ScreenDPI/96)
+		scaledHeight := A_ScreenHeight/(A_ScreenDPI/96)
+		xPos := scaledWidth - Width
+		yPos := scaledHeight - Height - 100
+		this.myGui.Move(xPos, yPos)
+		this.myGui.Show()
+		this.updateViewWithModel()
+	}
+
+	updateViewWithModel(*) {
+		this.gameTitleTextBox.text := this.quickToolsModel.gameTitle
+	}
+
+	hide(*) {
+		this.myGui.hide()
 	}
 }
 
-BuildTrayMenu(*)
-{
-	Persistent
-	TraySetIcon("speed-radar.png")
-	A_TrayMenu.Delete()
-	A_TrayMenu.Add()
-	A_TrayMenu.Add("Disable Frame Limiter", DisableFrameLimiter)
-	A_TrayMenu.Add("Frame limiter 60", LimitFrames60)
-	A_TrayMenu.Add("Frame limiter 40", LimitFrames40)
-	A_TrayMenu.Add("Frame limiter 30", LimitFrames30)
-	A_TrayMenu.Add()
-	A_TrayMenu.Add("Disable Overlay", DisableOSD)
-	A_TrayMenu.Add("Show Subtle Overlay", ShowSubtleOSD)
-	A_TrayMenu.Add("Show Mango Overlay", ShowMangoOSD)
-	A_TrayMenu.Add("Show Mango_Latency Overlay", ShowMangoLatencyOSD)
-	A_TrayMenu.Add("Show TopBar Overlay", ShowTopBarOSD)
-	A_TrayMenu.Add()
-	A_TrayMenu.Add("Show Taskbar", ShowTaskbar)
-	SetIconsForTrayMenu()
-	A_TrayMenu.Add()
-}
+class QuickToolsController {
+	
+	quickToolsModel := ""
 
-SetIconsForTrayMenu(*) 
-{
-	A_TrayMenu.setIcon("Disable Frame Limiter", "speed-up-fill_.png",, 0)
-	A_TrayMenu.setIcon("Frame limiter 60", "outline-60fps-select_.png",, 0)
-	A_TrayMenu.setIcon("Frame limiter 40", "number-40-small_.png",, 0)
-	A_TrayMenu.setIcon("Frame limiter 30", "30fps-select_.png",, 0)
-	A_TrayMenu.setIcon("Disable Overlay", "off-tag_.png",, 0)
-	A_TrayMenu.setIcon("Show Subtle Overlay", "monitor_.png",, 0)
-	A_TrayMenu.setIcon("Show Mango Overlay", "monitor_.png",, 0)
-	A_TrayMenu.setIcon("Show Mango_Latency Overlay", "monitor_.png",, 0)
-	A_TrayMenu.setIcon("Show TopBar Overlay", "monitor_.png",, 0)
-	A_TrayMenu.setIcon("Show Taskbar", "table-alt-fill_.png",, 0)
-}
+	__New(quickToolsModel) {
+		this.quickToolsModel := quickToolsModel
+	}
 
-BuildMenu(*)
-{
-	Persistent
-	; Create the popup menu by adding some items to it.
-	MyMenu := Menu()
-	MyMenu.Add("Item 1", MenuHandler)
-	MyMenu.Add("Item 2", MenuHandler)
-	MyMenu.Add()  ; Add a separator line.
+	DisableFrameLimiter(*) {
+		Send "^+2" ;Ctrl+Shift+1
+	}
 
-	; Create another menu destined to become a submenu of the above menu.
-	Submenu1 := Menu()
-	Submenu1.Add("Item A", MenuHandler)
-	Submenu1.Add("Item B", MenuHandler)
+	LimitFrames60(*) {
+		Send "^+1"
+		Send "^+6" ;Ctrl+Shift+6
+	}
 
-	; Create a submenu in the first menu (a right-arrow indicator). When the user selects it, the second menu is displayed.
-	MyMenu.Add("My Submenu", Submenu1)
+	LimitFrames40(*) {
+		Send "^+1"
+		Send "^+4" ;Ctrl+Shift+4
+	}
 
-	MyMenu.Add()  ; Add a separator line below the submenu.
-	MyMenu.Add("Item 3", MenuHandler)  ; Add another menu item beneath the submenu.
-	MyMenu.show()
+	LimitFrames30(*) {
+		Send "^+1"
+		Send "^+3" ;Ctrl+Shift+3
+	}
 
-}
+	DisableOSD(*) {
+		Send "^+{F6}" ;Ctrl+Shift+F6
+	}
 
-MenuHandler(Item, *) {
-  ;  MsgBox("You selected " Item)
-}
+	ShowSubtleOSD(*) {
+		Send "^+{F5}"
+		sleep 100
+		Send "^+{F1}" ;Ctrl+Shift+F1
+	}
 
-DisableFrameLimiter(*)
-{
-	Send "^+2" ;Ctrl+Shift+1
-	;RestoreActiveWindow()
-}
+	ShowMangoOSD(*) {
+		Send "^+{F5}"
+		sleep 100
+		Send "^+{F2}" ;Ctrl+Shift+F2
+	} 
 
-LimitFrames60(*)
-{
-	Send "^+1"
-	Send "^+6" ;Ctrl+Shift+6
-	;RestoreActiveWindow()
-}
+	ShowMangoLatencyOSD(*) {
+		Send "^+{F5}"
+		sleep 100
+		Send "^+{F3}" ;Ctrl+Shift+F3
+	} 
 
-LimitFrames40(*)
-{
-	Send "^+1"
-	Send "^+4" ;Ctrl+Shift+4
-	;RestoreActiveWindow()
-}
+	ShowTopBarOSD(*) {
+		Send "^+{F5}"
+		sleep 100
+		Send "^+{F4}" ;Ctrl+Shift+F4
+	}
 
-LimitFrames30(*)
-{
-	Send "^+1"
-	Send "^+3" ;Ctrl+Shift+3
-	;RestoreActiveWindow()
-}
+	BackToGame(*) {
+		this.myGui.Hide()
+		this.restoreActiveWindow()
+	}
 
-DisableOSD(*)
-{
-	Send "^+{F6}" ;Ctrl+Shift+F6
-	;RestoreActiveWindow()
-}
+	ShowTaskbar(*) {
+		Send "#t"
+	}
 
-ShowSubtleOSD(*)
-{
-	Send "^+{F5}"
-	sleep 100
-	Send "^+{F1}" ;Ctrl+Shift+F1
-	;RestoreActiveWindow()
-}
+	storeActiveWindow(*) {
+		this.quickToolsModel.gameTitle := WinGetTitle("A")
+	
+	}
 
-ShowMangoOSD(*)
-{
-	Send "^+{F5}"
-	sleep 100
-	Send "^+{F2}" ;Ctrl+Shift+F2
-	;RestoreActiveWindow()
-} 
-
-ShowMangoLatencyOSD(*)
-{
-	Send "^+{F5}"
-	sleep 100
-	Send "^+{F3}" ;Ctrl+Shift+F3
-	;RestoreActiveWindow()
-} 
-
-ShowTopBarOSD(*)
-{
-	Send "^+{F5}"
-	sleep 100
-	Send "^+{F4}" ;Ctrl+Shift+F4
-	;RestoreActiveWindow()
-}
-
-BackToGame(*)
-{
-	myGui.Hide()
-	RestoreActiveWindow()
-}
-
-ShowTaskbar(*)
-{
-	Send "#t"
+	restoreActiveWindow(*) {
+		if WinExist(this.quickToolsModel.gameTitle) 
+			WinActivate this.quickToolsModel.gameTitle
+	
+	}
 }
 
 #+b::
 {
-	StoreActiveWindow()
-	;MoveMouseCloseToTrayIcon()
-	;A_TrayMenu.show()
-	;myGui.show(" y386 w205 h476")
-	myGui.show("Hide Autosize")
-	myGui.GetPos(&X, &Y, &Width, &Height)
-	scaledWidth := A_ScreenWidth/(A_ScreenDPI/96)
-	scaledHeight := A_ScreenHeight/(A_ScreenDPI/96)
-	xPos := scaledWidth - Width
-	yPos := scaledHeight - Height - 100
-	myGui.Move(xPos, yPos)
-	myGui.Show()
+	aQuickToolsController.storeActiveWindow()
+	aQuickToolsWindow.showRight()
 }
 
-StoreActiveWindow(*)
-{
-	global activeWindowTitle := WinGetTitle("A")
-}
-
-RestoreActiveWindow(*) 
-{
-	if WinExist(activeWindowTitle) 
-		WinActivate activeWindowTitle
-	
-}
 
 MoveMouseToTrayIconCenter(*) 
 {
