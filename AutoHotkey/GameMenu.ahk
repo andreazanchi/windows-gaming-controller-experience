@@ -91,8 +91,6 @@ class QuickToolsWindow {
 			Default:
 				
 		}
-		this.myGui.hide()
-		this.aQuickToolController.Close()
 	
 	}
 
