@@ -1,61 +1,25 @@
 ﻿#Requires AutoHotkey v2.0
 
+TraySetIcon("speed-radar.png")
 aQuickToolsModel := QuickToolsModel()
 aQuickToolsController := QuickToolsController(aQuickToolsModel)
-aButtonEventHandler := MyButtonEventHandler(aQuickToolsController)
-aQuickToolsWindow := QuickToolsWindow(aButtonEventHandler, aQuickToolsModel)
+aQuickToolsWindow := QuickToolsWindow(aQuickToolsModel, aQuickToolsController)
 
 
 class QuickToolsModel {
 	gameTitle := ""
 }
 
-class MyButtonEventHandler {
-	
-	aQuickToolsController := ""
-	
-	__New(quickToolsController) {
-		this.aQuickToolsController := quickToolsController
-	}
-
-	Call(GuiCtrlObj, Info) {
-		Switch GuiCtrlObj.Text {
-			Case "Disable Frame Limit":
-				this.aQuickToolsController.DisableFrameLimiter()
-			Case "60 FPS Limit":
-				this.aQuickToolsController.LimitFrames60()
-			Case "30 FPS Limit":
-				this.aQuickToolsController.LimitFrames30()
-			Case "40 FPS Limit":
-				this.aQuickToolsController.LimitFrames40()
-			Case "Disable Overlay":
-				this.aQuickToolsController.DisableOSD()
-			Case "Subtle Overlay":
-				this.aQuickToolsController.ShowSubtleOSD()
-			Case "Mango Overlay":
-				this.aQuickToolsController.ShowMangoOSD()	
-			Case "Mango Latency Overlay":
-				this.aQuickToolsController.ShowMangoLatencyOSD()	
-			Case "Topbar Overlay":
-				this.aQuickToolsController.ShowTopBarOSD()		
-			Case "Back To Game": 
-				this.myGui.Hide()
-				aQuickToolsController.restoreActiveWindow()
-			Default:
-		}
-	
-	}
-
-
-}
 
 class QuickToolsWindow {
 	
 	myGui := ""
 	quickToolsModel := ""
 	gameTitleTextBox := ""
+	aQuickToolController := ""
 
-	__New(eventHandler, quickToolsModel) {
+	__New(quickToolsModel, aQuickToolsController) {
+		this.aQuickToolController := aQuickToolsController
 		this.quickToolsModel := quickToolsModel
 		this.myGui := Gui()
 		this.myGui.Title := "Quick Tools"
@@ -79,20 +43,57 @@ class QuickToolsWindow {
 		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
 		buttonTopbarOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Topbar Overlay")
 		buttonBackToGame := this.myGui.Add("Button", "XS+35 YS+50  w181 h32", "Back To Game")
-		this.gameTitleTextBox := this.myGui.Add("Text", "XP YP+35  w181 h16", "")
-		buttonClose := this.myGui.Add("Button", "XP XS+35  w181 h32", "Close")
-		buttonDisableFrameLimit.OnEvent("Click", eventHandler)
-		button60FPSLimit.OnEvent("Click", eventHandler)
-		FPSLimithBtnFpsLimit1.OnEvent("Click", eventHandler)
-		button40FPSLimit.OnEvent("Click", eventHandler)
-		buttonDisableOverlay.OnEvent("Click", eventHandler)
-		buttonSubtleOverlay.OnEvent("Click", eventHandler)
-		buttonMangoOverlay.OnEvent("Click", eventHandler)
-		buttonMangoLatencyOverlay.OnEvent("Click", eventHandler)
-		buttonTopbarOverlay.OnEvent("Click", eventHandler)
-		buttonBackToGame.OnEvent("Click", eventHandler)
-		buttonClose.OnEvent("Click", (*) => this.myGui.Hide())
-		this.myGui.OnEvent('Close', (*) => this.myGui.Hide())
+		this.gameTitleTextBox := this.myGui.Add("Text", "XP YP+35  w181 h16  -Tabstop Disabled", "")
+		;buttonClose := this.myGui.Add("Button", "XP XS+35  w181 h32", "Close")
+		buttonDisableFrameLimit.OnEvent("Click", this)
+		button60FPSLimit.OnEvent("Click", this)
+		FPSLimithBtnFpsLimit1.OnEvent("Click", this)
+		button40FPSLimit.OnEvent("Click", this)
+		buttonDisableOverlay.OnEvent("Click", this)
+		buttonSubtleOverlay.OnEvent("Click", this)
+		buttonMangoOverlay.OnEvent("Click", this)
+		buttonMangoLatencyOverlay.OnEvent("Click", this)
+		buttonTopbarOverlay.OnEvent("Click", this)
+		buttonBackToGame.OnEvent("Click", this)
+		;buttonClose.OnEvent("Click", this)
+		this.myGui.OnEvent('Close', (*) => 
+			this.myGui.hide()
+			this.aQuickToolController.Close()
+		)
+	}
+
+	Call(GuiCtrlObj, Info) {
+		Switch GuiCtrlObj.Text {
+			Case "Disable Frame Limit":
+				this.aQuickToolController.DisableFrameLimiter()
+			Case "60 FPS Limit":
+				this.aQuickToolController.LimitFrames60()
+			Case "30 FPS Limit":
+				this.aQuickToolController.LimitFrames30()
+			Case "40 FPS Limit":
+				this.aQuickToolController.LimitFrames40()
+			Case "Disable Overlay":
+				this.aQuickToolController.DisableOSD()
+			Case "Subtle Overlay":
+				this.aQuickToolController.ShowSubtleOSD()
+			Case "Mango Overlay":
+				this.aQuickToolController.ShowMangoOSD()	
+			Case "Mango Latency Overlay":
+				this.aQuickToolController.ShowMangoLatencyOSD()	
+			Case "Topbar Overlay":
+				this.aQuickToolController.ShowTopBarOSD()		
+			Case "Back To Game": 
+				this.myGui.hide()
+				this.aQuickToolController.BackToGame()
+			Case "Close":
+				this.myGui.hide()
+				this.aQuickToolController.Close()
+			Default:
+				
+		}
+		this.myGui.hide()
+		this.aQuickToolController.Close()
+	
 	}
 
 	showRight(*) {
@@ -122,6 +123,7 @@ class QuickToolsController {
 
 	__New(quickToolsModel) {
 		this.quickToolsModel := quickToolsModel
+		
 	}
 
 	DisableFrameLimiter(*) {
@@ -172,8 +174,11 @@ class QuickToolsController {
 	}
 
 	BackToGame(*) {
-		this.myGui.Hide()
 		this.restoreActiveWindow()
+	}
+
+	Close(*) {
+		
 	}
 
 	ShowTaskbar(*) {
@@ -182,7 +187,6 @@ class QuickToolsController {
 
 	storeActiveWindow(*) {
 		this.quickToolsModel.gameTitle := WinGetTitle("A")
-	
 	}
 
 	restoreActiveWindow(*) {
