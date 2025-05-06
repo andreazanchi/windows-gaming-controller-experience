@@ -43,7 +43,7 @@ class QuickToolsWindow {
 		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
 		buttonTopbarOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Topbar Overlay")
 		buttonBackToGame := this.myGui.Add("Button", "XS+35 YS+50  w181 h32", "Back To Game")
-		this.gameTitleTextBox := this.myGui.Add("Text", "XP YP+35  w181 h16  -Tabstop Disabled", "")
+		this.gameTitleTextBox := this.myGui.Add("Text", "XP YP+35  w181 h16  -Tabstop", "")
 		;buttonClose := this.myGui.Add("Button", "XP XS+35  w181 h32", "Close")
 		buttonDisableFrameLimit.OnEvent("Click", this)
 		button60FPSLimit.OnEvent("Click", this)
