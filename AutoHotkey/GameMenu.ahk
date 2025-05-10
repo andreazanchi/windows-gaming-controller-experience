@@ -42,8 +42,11 @@ class QuickToolsWindow {
 		buttonMangoLatencyOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Mango Latency Overlay")
 		this.myGui.Add("Picture", "XS YS+35 w32 h32 Section +Disabled", "monitor_.png")
 		buttonTopbarOverlay := this.myGui.Add("Button", "XP+35 YP w181 h32", "Topbar Overlay")
-		buttonBackToGame := this.myGui.Add("Button", "XS+35 YS+50  w181 h32", "Back To Game")
-		this.gameTitleTextBox := this.myGui.Add("Text", "XP YP+35  w181 h16  -Tabstop", "")
+		this.myGui.Add("Picture", "XS YS+50 w32 h32 Section +Disabled", "icons8-gamepad-80.png")
+		buttonBackToGame := this.myGui.Add("Button", "XP+35 YP  w181 h32", "Back To Game")
+		this.gameTitleTextBox := this.myGui.Add("Text", "XP+10 YP+35  w181 h16  -Tabstop", "")
+		this.myGui.Add("Picture", "XS YS+70 w32 h32 Section +Disabled", "table-alt-fill_.png")
+		buttonWindowsTaskbar := this.myGui.Add("Button", "XP+35 YP  w181 h32", "Windows Taskbar")
 		;buttonClose := this.myGui.Add("Button", "XP XS+35  w181 h32", "Close")
 		buttonDisableFrameLimit.OnEvent("Click", this)
 		button60FPSLimit.OnEvent("Click", this)
@@ -55,6 +58,7 @@ class QuickToolsWindow {
 		buttonMangoLatencyOverlay.OnEvent("Click", this)
 		buttonTopbarOverlay.OnEvent("Click", this)
 		buttonBackToGame.OnEvent("Click", this)
+		buttonWindowsTaskbar.OnEvent("Click", this)
 		;buttonClose.OnEvent("Click", this)
 		this.myGui.OnEvent('Close', (*) => 
 			this.myGui.hide()
@@ -85,6 +89,8 @@ class QuickToolsWindow {
 			Case "Back To Game": 
 				this.myGui.hide()
 				this.aQuickToolController.BackToGame()
+			Case "Windows Taskbar":
+				this.aQuickToolController.ShowTaskbar()
 			Case "Close":
 				this.myGui.hide()
 				this.aQuickToolController.Close()
@@ -201,6 +207,7 @@ class QuickToolsController {
 }
 
 
+
 MoveMouseToTrayIconCenter(*) 
 {
 	TrayIconRect := GetTrayIconRECT(A_ScriptHwnd)
@@ -229,3 +236,7 @@ GetTrayIconRECT(hwnd) {
    if !DllCall('Shell32\Shell_NotifyIconGetRect', 'Ptr', NOTIFYICONIDENTIFIER, 'Ptr', RECT := Buffer(16), 'HRESULT')
       return {Left: NumGet(RECT, 0, 'Int'), Top: NumGet(RECT, 4, 'Int'), Right: NumGet(RECT, 8, 'Int'), Bottom: NumGet(RECT, 12, 'Int')}
 }
+
+#HotIf WinActive("Quick Tools")
+Up::Send "+{Tab}"
+Down::Send "{Tab}"
